@@ -62,4 +62,6 @@ dependencies {
     implementation(libs.androidx.paging.compose.android)
     implementation(libs.androidx.viewmodel.compose)
     debugImplementation(libs.compose.ui.tooling)
+//        androidDebugDb            = "com.github.amitshekhariitbhu.Android-Debug-Database:debug-db:$androidDebugDbVersion"
+//    debugImplementation(libs.debug.db)
 }

@@ -15,10 +15,14 @@
  */
 package com.example.fruitties.di
 
+import com.example.fruitties.ComplexQueryRepository
 import com.example.fruitties.DataRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class AppContainer(
     private val factory: Factory,
@@ -29,6 +33,18 @@ class AppContainer(
             database = factory.createRoomDatabase(),
             cartDataStore = factory.createCartDataStore(),
             scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+        ).also {
+            complexQueryRepository.let {
+                val scope = CoroutineScope(Dispatchers.IO)
+                scope.launch { it.complexQuery("") }
+            }
+        }
+    }
+
+    val complexQueryRepository: ComplexQueryRepository by lazy {
+        ComplexQueryRepository(
+            database = factory.createRoomDatabase(),
+            connection = factory.getConnection(),
         )
     }
 }

@@ -16,12 +16,16 @@
 
 package com.example.fruitties.android.ui
 
+import android.database.Cursor
+import android.util.Log
+import androidx.core.database.getStringOrNull
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.fruitties.ComplexQueryRepository
 import com.example.fruitties.DataRepository
 import com.example.fruitties.android.di.App
 import com.example.fruitties.database.CartItemDetails
@@ -32,7 +36,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val repository: DataRepository) : ViewModel() {
+class MainViewModel(private val repository: DataRepository, private val complexQueryRepository: ComplexQueryRepository) : ViewModel() {
 
     val uiState: StateFlow<HomeUiState> =
         repository.getData().map { HomeUiState(it) }
@@ -56,12 +60,32 @@ class MainViewModel(private val repository: DataRepository) : ViewModel() {
         }
     }
 
+    fun complexQuery() {
+        viewModelScope.launch {
+            val cursor = complexQueryRepository.complexQuery("SELECT * FROM Fruittie WHERE id > 3") as Cursor
+            Log.d("MainViewModel", "complexQuery: $cursor")
+            val list = mutableListOf<Map<String, String?>>()
+            cursor.moveToFirst()
+
+            while (!cursor.isAfterLast) {
+                val map = mutableMapOf<String, String?>()
+                cursor.columnNames.forEach {
+                    map[it] = cursor.getStringOrNull(cursor.getColumnIndex(it))
+                }
+                list.add(map)
+                cursor.moveToNext()
+            }
+            Log.d("MainViewModel", "complexQuery: $list")
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as App)
                 val repository = application.container.dataRepository
-                MainViewModel(repository = repository)
+                val complexQueryRepository = application.container.complexQueryRepository
+                MainViewModel(repository = repository, complexQueryRepository = complexQueryRepository)
             }
         }
     }

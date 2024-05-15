@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +62,10 @@ import com.example.fruitties.model.Fruittie
 fun ListScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.Factory)) {
     val uiState by viewModel.uiState.collectAsState()
     val cartState by viewModel.cartUiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.complexQuery()
+    }
 
     Scaffold(
         topBar = {

@@ -17,6 +17,7 @@ package com.example.fruitties.di
 
 import android.app.Application
 import androidx.room.Room
+import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.fruitties.database.AppDatabase
 import com.example.fruitties.database.CartDataStore
@@ -42,4 +43,5 @@ actual class Factory(private val app: Application) {
     }
 
     actual fun createApi(): FruittieApi = commonCreateApi()
+    actual fun getConnection(): SQLiteConnection = BundledSQLiteDriver().open(app.getDatabasePath(dbFileName).absolutePath)
 }

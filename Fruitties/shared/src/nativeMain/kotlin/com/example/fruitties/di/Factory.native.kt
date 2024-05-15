@@ -16,6 +16,7 @@
 package com.example.fruitties.di
 
 import androidx.room.Room
+import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.fruitties.database.AppDatabase
 import com.example.fruitties.database.CartDataStore
@@ -46,6 +47,8 @@ actual class Factory {
             "${fileDirectory()}/cart.json"
         }
     }
+
+    actual fun getConnection(): SQLiteConnection = BundledSQLiteDriver().open( "${fileDirectory()}/$dbFileName")
 
     @OptIn(ExperimentalForeignApi::class)
     private fun fileDirectory(): String {

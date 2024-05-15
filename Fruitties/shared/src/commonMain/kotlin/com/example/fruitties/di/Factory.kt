@@ -15,6 +15,8 @@
  */
 package com.example.fruitties.di
 
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.driver.bundled.BundledSQLiteConnection
 import com.example.fruitties.database.AppDatabase
 import com.example.fruitties.database.CartDataStore
 import com.example.fruitties.network.FruittieApi
@@ -29,6 +31,8 @@ expect class Factory {
     fun createRoomDatabase(): AppDatabase
     fun createApi(): FruittieApi
     fun createCartDataStore(): CartDataStore
+
+    fun getConnection(): SQLiteConnection
 }
 
 internal fun commonCreateApi(): FruittieApi = FruittieNetworkApi(
